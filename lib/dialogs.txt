@@ -1,0 +1,7 @@
+splash
+##############################
+     Welcome player_name
+##############################
+
+level_1
+Hey player_name, hackers are on the network, do your job!
