@@ -105,7 +105,6 @@ class HackerMachine1(Machine):
             return "This has no effect..."
 
 
-
 class Level():
     def __init__(self, machines, start_dialogs, end_dialogs):
         self.done = False
@@ -138,31 +137,6 @@ level_1 = Level(
     end_dialogs = dialogs["end_level_1"],
 )
 
-#class Level_0(Level):
-#    def __init__(self):
-#        self.done = False
-#        self.machines = [
-#            Machine(conf["player_name"], "10.100.100.1337"),
-#            HackerMachine1("Hacker", "10.100.100.noob", {"README.md": "pwd: verynoob"}),
-#        ]
-#        self.connection = [self.machines[0]]
-#        print(dialogs["start_level_0"])
-#
-#        self.end_dialog = dialogs["end_level_0"]
-#
-#
-#class Level_1(Level):
-#    def __init__(self):
-#        self.done = False
-#        self.machines = [
-#            Machine(conf["player_name"], "10.100.100.1337", {"logs.txt": "*Utterly unreadible russian, bullshit. Don't even look at it, hack away!*"}),
-#            HackerMachine1("Hacker", "10.100.100.logger", {"trojan.code": "while True:\n\tsteal_data()\n\ttry_to_destroy_logs()"}),
-#        ]
-#        self.connection = [self.machines[0]]
-#        self.start_dialog = dialogs["start_level_1"])
-#
-#        self.end_dialog = dialogs["end_level_1"]
-
 
 class Game():
     def __init__(self):
@@ -191,6 +165,7 @@ class Game():
             print("You finised the whole game!")
             print("Hoped you liked it")
             self.on = False
+
 
 def main():
     g = Game()
