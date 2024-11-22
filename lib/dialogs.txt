@@ -3,5 +3,18 @@ splash
      Welcome player_name
 ##############################
 
-level_1
+start_level_0
+## Level 0 ##
 Hey player_name, hackers are on the network, do your job!
+
+end_level_0
+Well done player_name! Heckers left some logs behind, we might want to investigate...
+
+start_level_1
+## Level 1 ##
+Look at that! They left some pretty big logs.
+IT think they might have stolen some critical data, you must track them down and estroy their data before it's too late.
+Transferring the logs to your machine.
+
+end_level_1
+Damn! Nice job!

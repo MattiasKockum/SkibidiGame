@@ -3,9 +3,6 @@ from lib.parse_dialogs import get_dialogs
 
 dialogs = get_dialogs(conf)
 
-def dialog(name):
-    print(dialogs[name])
-
 class Machine():
     def __init__(self, hostname, ip, files={}):
         self.hostname = hostname
@@ -37,7 +34,7 @@ class Machine():
     def command_network_scan(self, *args, **kwargs):
         level = kwargs["level"]
         machines = level.machines
-        r = f"There are {len(machines)} machines on your network\n"
+        r = f"There are {len(machines)} machines on your network:\n"
         for m in machines:
             r += str(m) + '\n'
         return r
@@ -49,7 +46,7 @@ class Machine():
         if len(args) != 1:
             return "usage: sshaxxx [ip to haxxx into] | back | info"
         elif args[0] == level.connection[-1].ip:
-            return "Already logged to this machine"
+            return "Already logged to this machine."
         elif args[0] == "info":
             return level.connection
         elif args[0] == "back":
@@ -57,13 +54,13 @@ class Machine():
                 level.connection.pop()
                 return "Disconnected"
             else:
-                return "Already on your host machine"
+                return "Already on your host machine."
         else:
             for m in machines:
                 if m.ip == args[0]:
                     level.connection.append(m)
                     return f"Haxxed into {m.hostname}"
-            return f"Found no machine with ip {args[0]}"
+            return f"Found no machine with ip {args[0]}."
 
     def command_ls(self, *args, **kwargs):
         return '\n'.join(self.files)
@@ -77,7 +74,8 @@ class Machine():
         else:
             return f"No file named {args[0]}"
 
-class HackerMachine(Machine):
+
+class HackerMachine0(Machine):
     def command_self_destruct(self, *args, **kwargs):
         level = kwargs["level"]
         pwd = input("Please enter password\n-> ")
@@ -88,45 +86,116 @@ class HackerMachine(Machine):
             return "Wrong password"
 
 
-class Level_0():
-    def __init__(self, game):
-        #self.game = game
+class HackerMachine1(Machine):
+    def command_temper_code(self, *args, **kwargs):
+        level = kwargs["level"]
+        for m in level.machines:
+            if "trojan.code" in m.files:
+                m.files["trojan.code"] = "while True:\n\tsend_data_destroyer()  # leet move\n\tsend_troll_face()"
+                level.tempered = True
+                return "Tempered the code !"
+        return "Nothing to temper with..."
+
+    def command_update_code(self, *args, **kwargs):
+        level = kwargs["level"]
+        if "tempered" in level.__dict__:
+            level.done = True
+            return "Pushing the code online..."
+        else:
+            return "This has no effect..."
+
+
+
+class Level():
+    def __init__(self, machines, start_dialogs, end_dialogs):
         self.done = False
-        self.machines = [
-            Machine(conf["player_name"], "10.100.100.1337"),
-            HackerMachine("Hacker", "10.100.100.noob", {"README.md": "pwd: verynoob"}),
-        ]
+        self.machines = machines
         self.connection = [self.machines[0]]
-        dialog("level_1")
+        self.start_dialogs = start_dialogs
+        self.end_dialogs = end_dialogs
+
+    def play(self, game):
+        player_input = input("> ")
+        r = self.connection[-1].input_command(player_input, game, self)
+        print(r)
+
+
+level_0 = Level(
+    machines = [
+        Machine(conf["player_name"], "10.100.100.1337"),
+        HackerMachine0("Hacker", "10.100.100.noob", {"README.md": "pwd: verynoob"}),
+        ],
+    start_dialogs = dialogs["start_level_0"],
+    end_dialogs = dialogs["end_level_0"],
+)
+
+level_1 = Level(
+    machines = [
+        Machine(conf["player_name"], "10.100.100.1337", {"logs.txt": "*Utterly unreadible russian, bullshit. Don't even look at it, hack away!*"}),
+        HackerMachine1("Hacker", "10.100.100.logger", {"trojan.code": "while True:\n\tsteal_data()\n\ttry_to_destroy_logs()"}),
+        ],
+    start_dialogs = dialogs["start_level_1"],
+    end_dialogs = dialogs["end_level_1"],
+)
+
+#class Level_0(Level):
+#    def __init__(self):
+#        self.done = False
+#        self.machines = [
+#            Machine(conf["player_name"], "10.100.100.1337"),
+#            HackerMachine1("Hacker", "10.100.100.noob", {"README.md": "pwd: verynoob"}),
+#        ]
+#        self.connection = [self.machines[0]]
+#        print(dialogs["start_level_0"])
+#
+#        self.end_dialog = dialogs["end_level_0"]
+#
+#
+#class Level_1(Level):
+#    def __init__(self):
+#        self.done = False
+#        self.machines = [
+#            Machine(conf["player_name"], "10.100.100.1337", {"logs.txt": "*Utterly unreadible russian, bullshit. Don't even look at it, hack away!*"}),
+#            HackerMachine1("Hacker", "10.100.100.logger", {"trojan.code": "while True:\n\tsteal_data()\n\ttry_to_destroy_logs()"}),
+#        ]
+#        self.connection = [self.machines[0]]
+#        self.start_dialog = dialogs["start_level_1"])
+#
+#        self.end_dialog = dialogs["end_level_1"]
 
 
 class Game():
     def __init__(self):
         self.on = True
-        dialog("splash")
-        self.levels = [Level_0]
-        self.level = self.levels[0](self)
+        print(dialogs["splash"])
+        self.levels = [
+            #level_0,
+            level_1
+        ]
         self.level_index = 0
 
-    def play(self, player_input):
-        r = self.level.connection[-1].input_command(player_input, self, self.level)
-        if self.level.done:
-            r += "\nYou win"
-            if self.level_index < len(self.levels) - 1:
-                self.level_index += 1
-                self.level = self.levels[self.level_index](self)
-            else:
-                r += "\nYou finised the whole game!"
-                r += "\nHoped you liked it"
-                self.on = False
-        return r
+    def play(self):
+        # Start level
+        self.level = self.levels[self.level_index]
+        print(self.level.start_dialogs)
+        # Play level
+        while self.on and not self.level.done:
+            self.level.play(self)
+        if not self.on:
+            return
+        # End level
+        print(self.level.end_dialogs)
+        if self.level_index < len(self.levels) - 1:
+            self.level_index += 1
+        else:
+            print("You finised the whole game!")
+            print("Hoped you liked it")
+            self.on = False
 
 def main():
     g = Game()
     while g.on:
-        player_input = input("> ")
-        r = g.play(player_input)
-        print(r)
+        g.play()
 
 
 if __name__ == "__main__":
