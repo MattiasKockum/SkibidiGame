@@ -143,7 +143,7 @@ class Game():
         self.on = True
         print(dialogs["splash"])
         self.levels = [
-            #level_0,
+            level_0,
             level_1
         ]
         self.level_index = 0
